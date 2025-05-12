@@ -88,7 +88,7 @@ ISR(INT7_vect){
 	switch (line)
 	{
 		case 0x01: *key_num = SUB; break;
-		case 0x02: *key_num = MUL; break;
+		case 0x02: *key_num = MUL; 
 		case 0x04: *key_num = DIV; break;
 		case 0x08: *key_num = ADD; break;
 		default: *key_num = NON_CLICK;
@@ -119,8 +119,6 @@ void Reset_Val_arr(uint8_t *arr){
 		PORTB = 0xff;
 		_delay_ms(10);
 	}
-	
-	
 }
 void Set_Val_arr(uint8_t *arr, int16_t num){
 	if(num > 9999){
@@ -128,32 +126,23 @@ void Set_Val_arr(uint8_t *arr, int16_t num){
 		*(arr+2) = BAR;
 		*(arr+1) = BAR;
 		*(arr)	 = BAR;
-		PORTC = 0x30;
-		_delay_ms(200); 
-		PORTC = 0xF0;
 	}
 	else if(num < 0){
 		*(arr+3) = NEG;
 		*(arr+2) = NEG;
 		*(arr+1) = NEG;
 		*(arr)	 = NEG;
-		PORTC = 0x70;
-		_delay_ms(200);
-		PORTC = 0xF0;
 	}
 	else{
-		*(arr+3) = (uint8_t)num/1000;
+		*(arr+3) = num/1000;
 		num %= 1000;
-		*(arr+2) = (uint8_t)num/100;
+		*(arr+2) = num/100;
 		num %= 100;
-		*(arr+1) = (uint8_t)num/10;
-		*arr = (uint8_t)num%10;
+		*(arr+1) = num/10;
+		*arr = num%10;
 		if(*(arr+3) == 0)							*(arr+3) = NON_CLICK;
 		if(*(arr+3) == NON_CLICK && *(arr+2) == 0)	*(arr+2) = NON_CLICK;
 		if(*(arr+2) == NON_CLICK && *(arr+1) == 0)	*(arr+1) = NON_CLICK;
-		PORTC = 0xB0;
-		_delay_ms(200);
-		PORTC = 0xF0;
 	}
 }
 int16_t Set_number(uint8_t *arr){
@@ -180,7 +169,7 @@ int16_t Calculate(int16_t *num1, int16_t *num2, uint8_t *op){
 				res = *num1 * *num2;
 			break;
 			case DIV:
-				if(*num1 != 0 && *num2 != 0){
+				if(*num2 != 0){
 					res = *num1 / *num2;
 				}
 				else res = EMPTY;
@@ -221,7 +210,7 @@ int main(void){
 			op=key_in;
 			key_in = NON_CLICK;
 		}
-		if(key_in == RESULT){
+		else if(key_in == RESULT){
 			num2 = Set_number(val);
 			result = Calculate(&num1, &num2, &op);
 			Set_Val_arr(val,result);
