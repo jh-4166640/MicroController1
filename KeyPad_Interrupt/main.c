@@ -88,7 +88,7 @@ ISR(INT7_vect){
 	switch (line)
 	{
 		case 0x01: *key_num = SUB; break;
-		case 0x02: *key_num = MUL; 
+		case 0x02: *key_num = MUL; break;
 		case 0x04: *key_num = DIV; break;
 		case 0x08: *key_num = ADD; break;
 		default: *key_num = NON_CLICK;
